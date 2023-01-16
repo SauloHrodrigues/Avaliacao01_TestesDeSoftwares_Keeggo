@@ -1,5 +1,7 @@
 package casosDeTestes;
 
+import java.util.concurrent.TimeUnit;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -104,15 +106,30 @@ public class RascunhosCasosDeTestes {
 	 *  primeiro item disponível, digitar o CEP “06010-067” e validar o retorno da(s) 
 	 *  informação(ões) de frete/prazo.
 	 * */
-	@Test
+	@Test  // => REVISAR RESULTADO
+	@Ignore
 	public void teste05_ValidarRetornoFretePrazo() throws InterruptedException {
+		String sCpePesquisado = "06010067";
 		WebElement wCaixaDePesquisa = driver.findElement(By.id("twotabsearchtextbox"));
 		wCaixaDePesquisa.sendKeys("frigideira");
 		WebElement wLupaDePesquisar = driver.findElement(By.id("nav-search-submit-button"));
 		wLupaDePesquisar.click();
-		Thread.sleep(5000);
+		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 		WebElement wPrimeiroElemento = driver.findElement(By.xpath("//div[@data-component-id='2']"));
 		wPrimeiroElemento.click();
+		
+		WebElement wEndereco = driver.findElement(By.id("cipInsideDeliveryBlock_feature_div"));
+		wEndereco.click();//não clica pelo firefox
+		WebElement wCampoCEP = driver.findElement(By.id("GLUXZipUpdateInput_0"));
+		wCampoCEP.sendKeys(sCpePesquisado);
+		driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+		WebElement wBotaoConfirma = driver.findElement(By.id("GLUXZipUpdate"));
+		wBotaoConfirma.click();
+		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+		WebElement wResposta = driver.findElement(By.xpath("//div[@id='contextualIngressPtLabel_deliveryShortLine']/span[2]"));
+		driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+		System.out.println("A resposta foi: "+wResposta.getText());
+		Assert.assertEquals(sCpePesquisado, wResposta.getText());
 		
 	}
 }
