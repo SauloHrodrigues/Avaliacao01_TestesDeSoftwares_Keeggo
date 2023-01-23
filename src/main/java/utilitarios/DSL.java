@@ -2,7 +2,6 @@ package utilitarios;
 
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -11,6 +10,8 @@ import org.openqa.selenium.WebElement;
 
 public class DSL {
 	WebDriver driver;
+
+	
 		
 	public DSL(WebDriver driver) {
 		this.driver = driver;
@@ -60,23 +61,34 @@ public class DSL {
 	}
 	
 	public void clicarPrimeiroItemDaBusca() {
-		WebElement wPrimeiroElemento = driver.findElement(By.xpath("//div[@id='s-skipLinkTargetForMainSearchResults']/.."
-				+ "//span[@data-component-type='s-search-results']//div[@data-index='2']"));
+		WebElement wPrimeiroElemento = driver.findElement(By.xpath("//div[@id='s-skipLinkTargetForMainSearchResults']/..//span[@data-component-type='s-search-results']//div[@data-index='2']"));
 		wPrimeiroElemento.click();
-	}
-	
-	public void consultarCEP(String sCEP) {
-		driver.findElement(By.id("contextualIngressPtLabel_deliveryShortLine")).click();
-		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-		driver.findElement(By.id("GLUXZipUpdateInput_0")).sendKeys(sCEP);
-		driver.findElement(By.id("GLUXZipUpdate")).click();
-		
 	}
 	
 	public void adicionarItemNoCarrinho() {
 		WebElement wBtnAdcionarCarrinho = driver.findElement(By.id("add-to-cart-button"));
 		wBtnAdcionarCarrinho.click();
 	}
+
+	public void entrarNoCarrinho() {
+		WebElement wCarrinho = driver.findElement(By.id("nav-cart-count-container"));
+		wCarrinho.click();
+	}
+	public String itemNoCarrinho(int item) {
+		WebElement wSacola = driver.findElement(By.id("activeCartViewForm"));
+		WebElement wItem01 = wSacola.findElement(By.xpath(".//div[@data-item-index='"+item+"']"));
+		return wItem01.getText();
+	}
+	
+	public Double conversorTextoEmValor(String valor) {
+		String[] sValor = valor.split(" ");
+//		System.out.println("Valor splitado = "+sValor[1]);
+		String[] sValorSV = sValor[1].split(",");
+		String valor1 = sValorSV[0].concat(".").concat(sValorSV[1]);
+		Double dValor = Double.parseDouble(valor1);
+		return dValor;
+	}
+	
 //	 public Object verificarItensNoCarrinho() {
 //			WebElement wCarrinho = driver.findElement(By.id("nav-cart-count-container"));
 //			wCarrinho.click();
