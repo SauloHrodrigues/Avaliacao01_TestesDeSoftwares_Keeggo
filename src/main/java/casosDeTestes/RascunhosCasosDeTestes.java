@@ -167,9 +167,25 @@ public class RascunhosCasosDeTestes {
 		}
 	
 //	******************* teste 09 *********************
-		
-		
-		
+		@Test
+		public void confirmarDoisItensNaCesta() {
+			String sNumeroDoTeste = "#0009";
+			String[] lItensPesuisados = { "fogao", "geladeira" };
+
+			for (int i = 0; i < lItensPesuisados.length; i++) {
+				dsl.buscarProduto(lItensPesuisados[i]);
+				dsl.clicarPrimeiroItemDaBusca();
+				dsl.adicionarItemNoCarrinho();
+			}
+			dsl.entrarNoCarrinho();
+			WebElement wQtdeItens = driver.findElement(By.id("nav-cart-count"));
+			Integer iQtdeItens = Integer.parseInt(wQtdeItens.getText());
+			if (lItensPesuisados.length == iQtdeItens) {
+				Assert.assertTrue(true);
+			} else {
+				Assert.assertTrue(false);
+			}
+		}		
 		
 //	******************* teste 10 *********************
 //	******************* teste 11 *********************
