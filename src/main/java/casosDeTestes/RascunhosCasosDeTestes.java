@@ -188,7 +188,24 @@ public class RascunhosCasosDeTestes {
 		}		
 		
 //	******************* teste 10 *********************
+		
+		@Test
+		public void excluirItemDoCarrinho() throws InterruptedException  {
+			String sNumeroDoTeste = "#0010";
+			dsl.buscarProduto("garrafa");
+			dsl.clicarPrimeiroItemDaBusca();
+			dsl.adicionarItemNoCarrinho();
+			dsl.entrarNoCarrinho();
+			WebElement wDeletarDoCarrinho = driver.findElement(By.xpath("//div[@data-item-index='1']//span[@data-action='delete']//input"));
+			wDeletarDoCarrinho.click();
+			Thread.sleep(800);// VERIFICAR
+			WebElement wMsgItemRemovido = driver.findElement(By.xpath("//div[@id='sc-active-cart']//h1[contains(text(),'está vazio.')]"));
+			Assert.assertEquals("Seu carrinho de compras da Amazon está vazio.",wMsgItemRemovido.getText());	
+		}
+				
 //	******************* teste 11 *********************
+		
+		
 //	******************* teste 12 *********************
 //	******************* teste 13 *********************
 //	******************* teste 14 *********************

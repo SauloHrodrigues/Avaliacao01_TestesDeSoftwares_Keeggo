@@ -88,11 +88,4 @@ public class DSL {
 		Double dValor = Double.parseDouble(valor1);
 		return dValor;
 	}
-	
-//	 public Object verificarItensNoCarrinho() {
-//			WebElement wCarrinho = driver.findElement(By.id("nav-cart-count-container"));
-//			wCarrinho.click();
-//			WebElement wSacola = driver.findElement(By.id("activeCartViewForm"));
-//			WebElement wItem01 = wSacola.findElement(By.xpath(".//div[@data-item-index='1']"));
-//	 }
 }
