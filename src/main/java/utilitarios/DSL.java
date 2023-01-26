@@ -50,7 +50,18 @@ public class DSL {
 		wLupaDePesquisar.click();
 	}
 	
-	public boolean validaProdutoEncontrado() {
+	public boolean validarProduto() {
+		WebElement wResultado = driver.findElement(By.xpath("//span[text()='Nenhum resultado para ']"));
+		System.out.println("getValue = " + wResultado.getAttribute("value"));
+		String sMensagem = wResultado.getAttribute("value");
+		if(sMensagem.equalsIgnoreCase("Nenhum resultado para")) {
+			return false;
+		}else {
+			return true;			
+		}
+	}
+	
+	public boolean validarProdutoEncontrado() {
 		WebElement teste = driver.findElement(By.xpath("//span[@data-component-type='s-result-info-bar']"));
 		System.out.println("resultado "+teste.getText());
 		if(teste.getText().contains("1-")|| teste.getText().contains("1")) {
@@ -78,6 +89,23 @@ public class DSL {
 		WebElement wSacola = driver.findElement(By.id("activeCartViewForm"));
 		WebElement wItem01 = wSacola.findElement(By.xpath(".//div[@data-item-index='"+item+"']"));
 		return wItem01.getText();
+	}
+	
+	public boolean removerItemDoCarrinho(int itemNumero) {
+		WebElement wQuantidadeDeitens = driver.findElement(By.id("nav-cart-count"));
+		String x = wQuantidadeDeitens.getText(); 
+		Integer qtd = Integer.parseInt(x);
+		System.out.println("Quantidade no carrinho = "+qtd);
+		
+		if (itemNumero<=qtd) {
+			WebElement wDeletarDoCarrinho = driver.findElement(By.xpath("//div[@data-item-index='"+itemNumero+"']//span[@data-action='delete']//input"));
+			wDeletarDoCarrinho.click();	
+			return true;
+		}else {
+			System.out.println("Item não encontrado");
+			return false;
+		}
+		
 	}
 	
 	public Double conversorTextoEmValor(String valor) {

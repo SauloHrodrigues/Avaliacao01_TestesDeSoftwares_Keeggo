@@ -69,9 +69,7 @@ public class RascunhosCasosDeTestes {
 	public void teste04_BuscaEValidacaoConteudoInexistente() {
 		String sNumeroDoTeste ="#0004";
 		dsl.buscarProduto("'ITEMINEXISTENTE012345'");
-		WebElement wResultado = driver.findElement(By.xpath("//span[text()='Nenhum resultado para ']"));
-		System.out.println("getValue = " + wResultado.getAttribute("value"));
-		Assert.assertEquals("Nenhum resultado para", wResultado.getText());
+		Assert.assertTrue(!dsl.validaProdutoEncontrado());
 	}
 	
 //	****************** Teste 05 ********************
@@ -204,9 +202,23 @@ public class RascunhosCasosDeTestes {
 		}
 				
 //	******************* teste 11 *********************
-		
-		
+		@Test
+		public void validarQuantidadeDeProdutosNoCarrinho() {
+			dsl.buscarProduto("fogao");
+			dsl.clicarPrimeiroItemDaBusca();
+			dsl.adicionarItemNoCarrinho();
+			dsl.buscarProduto("bicicleta");
+			dsl.clicarPrimeiroItemDaBusca();
+			dsl.adicionarItemNoCarrinho();
+			dsl.entrarNoCarrinho();
+			Assert.assertTrue(dsl.removerItemDoCarrinho(1));	
+		}		
 //	******************* teste 12 *********************
+		
+		
+		
+		
+		
 //	******************* teste 13 *********************
 //	******************* teste 14 *********************
 //	******************* teste 15 *********************
