@@ -2,14 +2,17 @@ package utilitarios;
 
 import java.util.concurrent.TimeUnit;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class DSL {
 	WebDriver driver;
+	WebElement wait;
 
 	
 		
@@ -17,7 +20,12 @@ public class DSL {
 		this.driver = driver;
 	}
 
-	@Test
+	public String obterConteudo(By by) {
+		WebElement wResultado = driver.findElement(by);
+		String st = wResultado.getText();
+		return st;
+	}
+	
 	public String LogarAmazon(String sEmail, String sSenha) {
 		WebElement wFazerLogin = driver.findElement(By.id("nav-link-accountList-nav-line-1"));
 		wFazerLogin.click();
@@ -44,26 +52,22 @@ public class DSL {
 
 
 	public void buscarProduto(String sNomeProduto) {
-		WebElement wCaixaDePesquisa = driver.findElement(By.id("twotabsearchtextbox"));
-		wCaixaDePesquisa.sendKeys(sNomeProduto);
-		WebElement wLupaDePesquisar = driver.findElement(By.id("nav-search-submit-button"));
-		wLupaDePesquisar.click();
-	}
-	
-	public boolean validarProduto() {
-		WebElement wResultado = driver.findElement(By.xpath("//span[text()='Nenhum resultado para ']"));
-		System.out.println("getValue = " + wResultado.getAttribute("value"));
-		String sMensagem = wResultado.getAttribute("value");
-		if(sMensagem.equalsIgnoreCase("Nenhum resultado para")) {
-			return false;
+		WebElement wCaixaPesquisa = driver.findElement(By.xpath("//form[@name='site-search']//input[@type='text']"));
+		String sIdentificaPagina = wCaixaPesquisa.getAttribute("id");
+		if(sIdentificaPagina.equalsIgnoreCase("twotabsearchtextbox")) {
+			wCaixaPesquisa.sendKeys(sNomeProduto);
+			WebElement wLupaDePesquisar = driver.findElement(By.id("nav-search-submit-button"));
+			wLupaDePesquisar.click();			
 		}else {
-			return true;			
-		}
+			wCaixaPesquisa.sendKeys(sNomeProduto);
+			WebElement wBtnIr = driver.findElement(By.xpath("//input[@value='Ir'][@type='submit']"));
+			wBtnIr.click();
+		}	
 	}
 	
+
 	public boolean validarProdutoEncontrado() {
 		WebElement teste = driver.findElement(By.xpath("//span[@data-component-type='s-result-info-bar']"));
-		System.out.println("resultado "+teste.getText());
 		if(teste.getText().contains("1-")|| teste.getText().contains("1")) {
 			return true;
 		}else {
@@ -78,6 +82,12 @@ public class DSL {
 	
 	public void adicionarItemNoCarrinho() {
 		WebElement wBtnAdcionarCarrinho = driver.findElement(By.id("add-to-cart-button"));
+		String sAtributoClass = wBtnAdcionarCarrinho.getAttribute("class");
+		if(sAtributoClass.equalsIgnoreCase("a-button a-spacing-small a-button-primary a-button-icon natc-enabled")) {
+			// cancela garantia
+			WebElement wBtnNaoIncluirGarantia = driver.findElement(By.id("attachSiNoCoverage-announce"));
+			wBtnNaoIncluirGarantia.click();
+		}
 		wBtnAdcionarCarrinho.click();
 	}
 
@@ -85,17 +95,16 @@ public class DSL {
 		WebElement wCarrinho = driver.findElement(By.id("nav-cart-count-container"));
 		wCarrinho.click();
 	}
-	public String itemNoCarrinho(int item) {
-		WebElement wSacola = driver.findElement(By.id("activeCartViewForm"));
-		WebElement wItem01 = wSacola.findElement(By.xpath(".//div[@data-item-index='"+item+"']"));
-		return wItem01.getText();
-	}
+//	public String itemNoCarrinho(int item) {
+//		WebElement wSacola = driver.findElement(By.id("activeCartViewForm"));
+//		WebElement wItem01 = wSacola.findElement(By.xpath(".//div[@data-item-index='"+item+"']"));
+//		return wItem01.getText();
+//	}
 	
 	public boolean removerItemDoCarrinho(int itemNumero) {
 		WebElement wQuantidadeDeitens = driver.findElement(By.id("nav-cart-count"));
 		String x = wQuantidadeDeitens.getText(); 
 		Integer qtd = Integer.parseInt(x);
-		System.out.println("Quantidade no carrinho = "+qtd);
 		
 		if (itemNumero<=qtd) {
 			WebElement wDeletarDoCarrinho = driver.findElement(By.xpath("//div[@data-item-index='"+itemNumero+"']//span[@data-action='delete']//input"));
@@ -110,10 +119,26 @@ public class DSL {
 	
 	public Double conversorTextoEmValor(String valor) {
 		String[] sValor = valor.split(" ");
-//		System.out.println("Valor splitado = "+sValor[1]);
 		String[] sValorSV = sValor[1].split(",");
 		String valor1 = sValorSV[0].concat(".").concat(sValorSV[1]);
 		Double dValor = Double.parseDouble(valor1);
 		return dValor;
 	}
+	
+	public void descerAteElemento(WebElement wElemento) {
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("windows.scrollBy(0,argument[0])", wElemento.getLocation().y);
+	}
+	
+	public void clicarComJS(WebElement wElemento) {
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("arguments[0].click();", wElemento);
+	}
+	
+	public int obterQuantidadeItensCarrinho() {
+		WebElement wQtdeItens = driver.findElement(By.id("nav-cart-count"));
+		Integer iQtdeItens = Integer.parseInt(wQtdeItens.getText());
+		return iQtdeItens;		
+	}
+	
 }
