@@ -188,6 +188,18 @@ public class AmazonUtils {
 	}
 	
 	public void clicarSubCateoria(String subCategoria){
+		String sErroPagina = driver.getCurrentUrl();
+		if(sErroPagina.contains("site-directory?ref=nav_em_linktree_fail")) {
+			do {
+				dsl.esperarPresencaElemento(By.xpath("//div[@id='h']//a"));
+				dsl.clicar(By.xpath("//div[@id='h']//a"));
+				dsl.esperarPresencaElemento(By.xpath("//*[@id='nav-main']/div/a"));
+				abrirMenuLateral();
+				clicarCategoria("Informática");
+				sErroPagina = driver.getCurrentUrl();
+			} while(sErroPagina.contains("site-directory?ref=nav_em_linktree_fail"));
+		}
+		
 		dsl.esperarPresencaElemento(By.xpath("//a[text()='"+subCategoria+"']"));
 		dsl.clicar(By.xpath("//a[text()='"+subCategoria+"']"));
 	}
@@ -204,6 +216,17 @@ public class AmazonUtils {
 		}else {
 			return false;
 		}
+	}
+	
+	public void selecionarMarca(String marca) {
+		dsl.esperarPresencaElemento(By.xpath("//span[text()='Marca']/../../ul//*[text()='Lenovo']"));
+		dsl.clicarComJS(By.xpath("//span[text()='Marca']/../../ul//*[text()='Lenovo']"));
+	}
+	
+	public String validarPrimeiroProduto() {
+		dsl.esperarPresencaElemento(By.xpath("//div[@data-index='1']"));
+		String sDescritivo = dsl.retornaConteudo(By.xpath("//div[@data-index='1']"));
+		return sDescritivo;
 	}
 	
 

@@ -216,7 +216,15 @@ public class CenariosDeTestes {
 	}
 
 //	******************* teste 14 *********************
-	
+	@Test
+	public void validarLenovoDescritivoPrimeiroProduto() {
+		String sIdTeste = "#0014";
+		amazon.abrirMenuLateral();
+		amazon.clicarCategoria("Informática");
+		amazon.clicarSubCateoria("Notebooks");
+		amazon.selecionarMarca("Lenovo");	
+		Assert.assertTrue(amazon.validarPrimeiroProduto().contains("Lenovo"));
+	}
 //	******************* teste 15 *********************
 
 }
