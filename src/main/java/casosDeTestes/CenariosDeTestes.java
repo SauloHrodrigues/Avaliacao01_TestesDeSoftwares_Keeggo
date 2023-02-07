@@ -21,7 +21,7 @@ import utilitarios.DSL;
 
 
 
-public class RascunhosCasosDeTestes {
+public class CenariosDeTestes {
 	WebDriver driver;
 	WebDriverWait wait;
 	DSL_antiga dsl_1;
@@ -206,7 +206,14 @@ public class RascunhosCasosDeTestes {
 	}
 
 //	******************* teste 13 - REVISADO *************************
-
+	@Test
+	public void validarBuscaCategoriaDepartamento() {
+		String sIdTeste = "#0013";
+		amazon.abrirMenuLateral();
+		amazon.clicarCategoria("Informática");
+		amazon.clicarSubCateoria("Notebooks");
+		Assert.assertTrue(amazon.validaReornoResultado());		
+	}
 
 //	******************* teste 14 *********************
 	
