@@ -1,6 +1,7 @@
 package utilitarios;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.By.ById;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -95,6 +96,14 @@ public class DSL {
 	public int converterStringToInteiro(String texto) {
 		Integer numInteiro = Integer.parseInt(texto);
 		return numInteiro;
+	}
+	
+//	********** Interação com JS *********************
+	
+	public void clicarComJS(By by) {
+		WebElement elemento = driver.findElement(by);
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("arguments[0].click();", elemento);
 	}
 
 }// fim da classe

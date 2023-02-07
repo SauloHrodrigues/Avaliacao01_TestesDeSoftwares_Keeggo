@@ -176,5 +176,35 @@ public class AmazonUtils {
 		return msg;
 	}
 	
+	public void abrirMenuLateral() {
+		dsl.clicar(By.xpath("//*[@id='nav-main']/div/a"));
+
+	}
+	
+	public void clicarCategoria(String valor) {
+		String categoria = valor;
+		dsl.esperarPresencaElemento(By.xpath("//div[@id='hmenu-content']/ul//div[contains(text(),'"+categoria+"')]"));
+		dsl.clicarComJS(By.xpath("//div[@id='hmenu-content']/ul//div[contains(text(),'"+categoria+"')]"));
+	}
+	
+	public void clicarSubCateoria(String subCategoria){
+		dsl.esperarPresencaElemento(By.xpath("//a[text()='"+subCategoria+"']"));
+		dsl.clicar(By.xpath("//a[text()='"+subCategoria+"']"));
+	}
+	
+	public boolean validaReornoResultado() {
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[contains(text(),'resultados para')]")));
+//		WebElement wResultado = driver.findElement(By.xpath("//span[contains(text(),'resultados para')]"));
+		String sResultado = dsl.retornaConteudo(By.xpath("//span[contains(text(),'resultados para')]/.."));
+//		System.out.println("resultao = "+
+//				dsl.retornaConteudo(By.xpath("//span[contains(text(),'resultados para')]/..")));
+		if(sResultado.contains("1-") && sResultado.contains("mais de ") && 
+				sResultado.contains("resultados para")) {
+			return true;			
+		}else {
+			return false;
+		}
+	}
+	
 
 }

@@ -193,27 +193,20 @@ public class RascunhosCasosDeTestes {
 	}
 	
 //	******************* teste 12 - REVISADO*********************
-	
+	@Test
+	public void validarNescessidadeDeLogim() {
+		String sNumeroDoTeste = "#0012";
+		String sProdutoPesquisado = "televisao";
+		amazon.pesquisar(sProdutoPesquisado);
+		amazon.clicarPrimeiroProdutoBusca();
+		amazon.adicionarProdutoCarrinho();
+		amazon.irParaCarrinho();
+		amazon.fecharPedido();
+		Assert.assertEquals("Fazer login", amazon.msgNecessarioLogin());
+	}
 
 //	******************* teste 13 - REVISADO *************************
-	@Test
-	public void validarBuscaCategoriaDepartamento() throws InterruptedException {
-		String sIdTeste = "#0013";
-		WebElement wBtnMenu = driver.findElement(By.xpath("//*[@id='nav-main']/div/a"));
-		wBtnMenu.click();
-		wait.until(ExpectedConditions
-				.presenceOfElementLocated(By.xpath("//div[@id='hmenu-content']/ul//a[@data-menu-id='16']")));
-		WebElement wInformatica = driver.findElement(By.xpath("//div[@id='hmenu-content']/ul//a[@data-menu-id='16']"));
-		dsl_1.clicarComJS(wInformatica);
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[text()='Notebooks']")));
-		WebElement wNotebook = driver.findElement(By.xpath("//a[text()='Notebooks']"));
-		dsl_1.clicarComJS(wNotebook);
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[contains(text(),'resultados para')]")));
-		WebElement wResultado = driver.findElement(By.xpath("//span[contains(text(),'resultados para')]"));
-		String[] sR1 = wResultado.getText().split("-");
-		Integer iResultado = Integer.parseInt(sR1[0]);
-		Assert.assertTrue(iResultado > 0);
-	}
+
 
 //	******************* teste 14 *********************
 	
