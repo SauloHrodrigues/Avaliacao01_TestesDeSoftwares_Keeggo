@@ -177,32 +177,23 @@ public class RascunhosCasosDeTestes {
 	}
 
 //	******************* teste 11 - REVISADO *********************
+	
 	@Test
-	public void validarQuantidadeDeProdutosNoCarrinho() {
-		dsl_1.buscarProduto("fogao");
-		dsl_1.clicarPrimeiroItemDaBusca();
-		dsl_1.adicionarItemNoCarrinho();
-		dsl_1.buscarProduto("bicicleta");
-		dsl_1.clicarPrimeiroItemDaBusca();
-		dsl_1.adicionarItemNoCarrinho();
-		dsl_1.entrarNoCarrinho();
-		dsl_1.removerItemDoCarrinho(1);
-		Assert.assertTrue(dsl_1.obterQuantidadeItensCarrinho()==1);
+	public void validarQtdeProdCarrinho() {
+		String sNumeroDoTeste = "#0011";
+		String[] sProduto = {"televisao","bicicleta"};
+		for(int i=0;i<sProduto.length;i++) {
+			amazon.pesquisar(sProduto[i]);
+			amazon.clicarPrimeiroProdutoBusca();
+			amazon.adicionarProdutoCarrinho();			
+		}
+		amazon.irParaCarrinho();
+		amazon.excluirItemCarrinho();
+		Assert.assertTrue(amazon.obterQdeItensCarrinho()==(sProduto.length -1));
 	}
+	
 //	******************* teste 12 - REVISADO*********************
-	@Test
-	public void validarNescessidadeDeLogim() {
-		String sNumeroDoTeste = "#0012";
-		String sProdutoPesquisado = "televisao";
-		dsl_1.buscarProduto(sProdutoPesquisado);
-		dsl_1.clicarPrimeiroItemDaBusca();
-		dsl_1.adicionarItemNoCarrinho();
-		dsl_1.entrarNoCarrinho();
-		WebElement wBtnFecharPedido = driver.findElement(By.name("proceedToRetailCheckout"));
-		wBtnFecharPedido.click();
-		WebElement wTelaDeLogin = driver.findElement(By.xpath("//h1"));
-		Assert.assertEquals("Fazer login", wTelaDeLogin.getText());
-	}
+	
 
 //	******************* teste 13 - REVISADO *************************
 	@Test

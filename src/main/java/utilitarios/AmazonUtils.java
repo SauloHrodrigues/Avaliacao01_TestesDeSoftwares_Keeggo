@@ -62,6 +62,7 @@ public class AmazonUtils {
 	}
 
 	public void clicarPrimeiroProdutoBusca() {
+		dsl.esperarPresencaElemento(By.xpath("//div[@data-component-id='2']"));
 		dsl.clicar(By.xpath("//div[@data-component-id='2']"));
 	}
 
@@ -152,7 +153,7 @@ public class AmazonUtils {
 //				.findElement(By.xpath("//div[@data-item-index='1']//span[@data-action='delete']//input"));
 //		wDeletarDoCarrinho.click();
 		dsl.clicar(By.xpath("//div[@data-item-index='1']//span[@data-action='delete']//input"));
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='sc-active-cart']//h1[contains(text(),'está vazio.')]")));
+//		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='sc-active-cart']//h1[contains(text(),'está vazio.')]")));
 		
 //		WebElement wMsgItemRemovido = driver
 //				.findElement(By.xpath("//div[@id='sc-active-cart']//h1[contains(text(),'está vazio.')]"));
@@ -160,11 +161,20 @@ public class AmazonUtils {
 	}
 	
 	public String retornaMsgCarrinho() {
+		dsl.esperarPresencaElemento(By.xpath("//div[@id='sc-active-cart']//h1[contains(text(),'está vazio.')]"));
 		String msg = dsl.retornaConteudo(By.xpath("//div[@id='sc-active-cart']//h1[contains(text(),'está vazio.')]"));
 		return msg;
 	}
 	
+	public void fecharPedido() {
+		dsl.clicar(By.name("proceedToRetailCheckout"));
+//		WebElement wTelaDeLogin = driver.findElement(By.xpath("//h1"));
+	}
 	
+	public String msgNecessarioLogin() {
+		String msg = dsl.retornaConteudo(By.xpath("//h1"));
+		return msg;
+	}
 	
 
 }
