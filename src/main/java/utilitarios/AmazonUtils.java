@@ -153,11 +153,18 @@ public class AmazonUtils {
 //		wDeletarDoCarrinho.click();
 		dsl.clicar(By.xpath("//div[@data-item-index='1']//span[@data-action='delete']//input"));
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='sc-active-cart']//h1[contains(text(),'está vazio.')]")));
-		dsl.retornaConteudo(By.xpath("//div[@id='sc-active-cart']//h1[contains(text(),'está vazio.')]"));
+		
 //		WebElement wMsgItemRemovido = driver
 //				.findElement(By.xpath("//div[@id='sc-active-cart']//h1[contains(text(),'está vazio.')]"));
 //		
 	}
+	
+	public String retornaMsgCarrinho() {
+		String msg = dsl.retornaConteudo(By.xpath("//div[@id='sc-active-cart']//h1[contains(text(),'está vazio.')]"));
+		return msg;
+	}
+	
+	
 	
 
 }

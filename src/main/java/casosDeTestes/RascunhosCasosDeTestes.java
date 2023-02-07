@@ -165,19 +165,15 @@ public class RascunhosCasosDeTestes {
 //	******************* teste 10 - REVISADO *********************
 
 	@Test
-	public void excluirItemDoCarrinho() throws InterruptedException {
+	public void excluirItemDoCarrinho()  {
 		String sNumeroDoTeste = "#0010";
-		dsl_1.buscarProduto("garrafa");
-		dsl_1.clicarPrimeiroItemDaBusca();
-		dsl_1.adicionarItemNoCarrinho();
-		dsl_1.entrarNoCarrinho();
-		WebElement wDeletarDoCarrinho = driver
-				.findElement(By.xpath("//div[@data-item-index='1']//span[@data-action='delete']//input"));
-		wDeletarDoCarrinho.click();
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='sc-active-cart']//h1[contains(text(),'está vazio.')]")));
-		WebElement wMsgItemRemovido = driver
-				.findElement(By.xpath("//div[@id='sc-active-cart']//h1[contains(text(),'está vazio.')]"));
-		Assert.assertEquals("Seu carrinho de compras da Amazon está vazio.", wMsgItemRemovido.getText());
+		String sItemPesquisado = "garrafa";
+		amazon.pesquisar(sItemPesquisado);
+		amazon.clicarPrimeiroProdutoBusca();
+		amazon.adicionarProdutoCarrinho();
+		amazon.irParaCarrinho();
+		amazon.excluirItemCarrinho();		
+		Assert.assertEquals("Seu carrinho de compras da Amazon está vazio.", amazon.retornaMsgCarrinho());
 	}
 
 //	******************* teste 11 - REVISADO *********************
