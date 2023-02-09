@@ -32,6 +32,10 @@ public class DSL {
 	public void clicarElemento(By by) {
 		driver.findElement(by).click();
 	}
+	public WebElement elemento(By by) {
+		return driver.findElement(by);
+	}
+	
 	
 	public void escrever(By by, String conteudo) {
 		WebElement wCaixa = driver.findElement(by);

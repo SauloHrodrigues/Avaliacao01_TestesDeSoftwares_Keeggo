@@ -1,22 +1,16 @@
 package casosDeTestes;
 
-import java.util.concurrent.TimeUnit;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import utilitarios.AmazonUtils;
-import utilitarios.DSL_antiga;
 import utilitarios.DSL;
 
 
@@ -24,7 +18,6 @@ import utilitarios.DSL;
 public class CenariosDeTestes {
 	WebDriver driver;
 	WebDriverWait wait;
-	DSL_antiga dsl_1;
 	DSL dsl;
 	AmazonUtils amazon;
 	String sEmail = "saulohrodrigues@gmail.com";
@@ -79,12 +72,13 @@ public class CenariosDeTestes {
 	}
 
 //	****************** Teste 03 REVISADO ********************
-
 	@Test
 	public void validarItemEncontrado() {
 		String sNumeroDoTeste = "#0003";
-		Assert.assertTrue(amazon.validarProdutoEncontrado("'ITEMINEXISTENTE012345'"));
+		amazon.pesquisar("'ITEMINEXISTENTE012345'");
+		Assert.assertEquals("Nenhum resultado para",amazon.msgProdutoInexiste());
 	}
+
 
 //	****************** Teste 04 - REVISADO ********************
 	@Test
@@ -192,7 +186,7 @@ public class CenariosDeTestes {
 		Assert.assertTrue(amazon.obterQdeItensCarrinho()==(sProduto.length -1));
 	}
 	
-//	******************* teste 12 - REVISADO*********************
+//	******************* teste 12 - REVer*********************
 	@Test
 	public void validarNescessidadeDeLogim() {
 		String sNumeroDoTeste = "#0012";
@@ -226,5 +220,14 @@ public class CenariosDeTestes {
 		Assert.assertTrue(amazon.validarPrimeiroProduto().contains("Lenovo"));
 	}
 //	******************* teste 15 *********************
-
+	@Test
+	public void validarOrdemMaioMenor() {
+		String sIdTeste = "#0015";
+		amazon.abrirMenuLateral();
+		amazon.clicarCategoria("Informática");
+		amazon.clicarSubCateoria("Notebooks");
+		amazon.selecionarMarca("Lenovo");	
+		amazon.ordenarPreco("maior", "menor");
+		Assert.assertTrue(amazon.confirmarOndenacao());		
+	}	
 }
