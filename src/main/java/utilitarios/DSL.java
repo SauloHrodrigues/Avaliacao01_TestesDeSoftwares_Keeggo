@@ -80,10 +80,7 @@ public class DSL {
 	
 //	********************** CONVERSORES *************************************
 
-	private void conversor(String origem, String destino, String Valor) {
 		
-	}
-	
 	public double converterStringToDouble(String texto, String separador) {
 		String[] aux = texto.split(separador);
 		String sValorTexto = aux[1];
@@ -94,7 +91,6 @@ public class DSL {
 		}
 		
 		Double valorDouble = Double.parseDouble(sValorTexto);
-		System.out.println("Valor converido = "+valorDouble);
 		return valorDouble;
 	}
 	public int converterStringToInteiro(String texto) {

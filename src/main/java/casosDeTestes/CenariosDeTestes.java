@@ -1,17 +1,27 @@
 package casosDeTestes;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDateTime;
+
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import utilitarios.AmazonUtils;
+import utilitarios.Constantes;
 import utilitarios.DSL;
+import utilitarios.ExcelUtils;
 
 
 
@@ -20,9 +30,11 @@ public class CenariosDeTestes {
 	WebDriverWait wait;
 	DSL dsl;
 	AmazonUtils amazon;
-	String sEmail = "saulohrodrigues@gmail.com";
-	String sSenha = "5@123456";
-
+	String sEnderecoDaPagina= Constantes.sEnderecoDaPagina;
+	String sId;
+	ExcelUtils excel = new ExcelUtils();
+//	String sAquivoExcel = Constantes.sEnderecoDoArquivoExcel+"\\"+Constantes.sNomeDoArquivoExcel;	
+	
 	@Before
 	public void inicioPadrao() {
 		driver = new ChromeDriver();
@@ -31,7 +43,8 @@ public class CenariosDeTestes {
 		amazon = new AmazonUtils(driver, dsl);
 		boolean bValidaSite = false;
 		while (bValidaSite == false) {
-			driver.get("https://www.amazon.com.br/");
+
+			driver.get(sEnderecoDaPagina);
 			WebElement wCaixaPesquisa = driver
 					.findElement(By.xpath("//form[@name='site-search']//input[@type='text']"));
 			String sIdentificaPagina = wCaixaPesquisa.getAttribute("id");
@@ -40,194 +53,140 @@ public class CenariosDeTestes {
 				bValidaSite = true;
 			} else {
 				System.out.println("Site errado!!");
-				 driver.quit();
+				driver.navigate().refresh();
+			
 			}
 		}
 	}
-
+	
+	@Rule
+	public TestName nomeScreenShort = new TestName();
 
 	@After
-	public void finalizacaoPadrao() {
-		 driver.quit();
-	}
+	public void finalizacaoPadrao() throws IOException {
+		LocalDateTime data = LocalDateTime.now();
+		int dd = data.getDayOfMonth();
+		int MM = data.getMonthValue();
+		int aaaa = data.getYear();
+		int hh =data.getHour();
+		int mm = data.getMinute();
+		TakesScreenshot screen = (TakesScreenshot) driver;
+		File evidencias= screen.getScreenshotAs(OutputType.FILE);
+		FileUtils.copyFile(evidencias, new File(
+				"src"+File.separator+"main"+File.separator+"java"+File.separator+
+				"evidencias"+File.separator+"ID_"+sId+"_"+dd+"_"+MM+"_"+aaaa+
+				"_"+hh+"_"+mm+".jpg"));
+		
+			driver.close();			
+			Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
 	
-	
-	
+		 
+	}	
 
-//	****************** Teste 01 ********************
+//	****************** CENARIO 01 ********************
 	@Test
 	public void validarLogimAmazon() {
-		String sNumeroDoTeste = "#0001";
-		amazon.login(sEmail, sSenha);
-		Assert.assertEquals("Olá, Saulo", dsl.retornaConteudo(By.id("nav-link-accountList-nav-line-1")) );
+		sId = "#0001";
+		amazon.login();
 	} 
 
-//	****************** Cenário 02 ********************
+//	****************** CENARIO 02 ********************
 	@Test
 	public void validarLogaltAmazon() {
-		String sNumeroDoTeste = "#0002";
-		amazon.login(sEmail, sSenha);
-		amazon.logut();
-		Assert.assertEquals("Fazer login", dsl.retornaConteudo(By.xpath("//label[@for='ap_email']/../../h1")));
+		sId = "#0002";
+		amazon.logout();
 	}
 
-//	****************** Teste 03 REVISADO ********************
+//	****************** CENARIO 03 ********************
 	@Test
-	public void validarItemEncontrado() {
-		String sNumeroDoTeste = "#0003";
-		amazon.pesquisar("'ITEMINEXISTENTE012345'");
-		Assert.assertEquals("Nenhum resultado para",amazon.msgProdutoInexiste());
+	public void validarProdutoExistente() {
+		sId = "#0003";
+		amazon.validarProdutoExistente("#0003");
+	}
+	
+//	****************** CENARIO 04 ********************
+	@Test
+	public void validarMsgProdutoNaoEncontrado() {
+		sId = "#0004";
+		amazon.validarMsgProdutoNaoEncontrado("#0004");
 	}
 
-
-//	****************** Teste 04 - REVISADO ********************
+//	****************** CENARIO 05 ********************
 	@Test
-	public void validarConteudoInexistente() {
-		String sNumeroDoTeste = "#0004";
-		amazon.pesquisar("'ITEMINEXISTENTE012345'");
-		Assert.assertEquals("Nenhum resultado para", dsl.retornaConteudo(By.xpath("//span[text()='Nenhum resultado para ']")));				
-	}
-
-//	****************** Teste 05 - REVISADO  ****************************
-	@Test
-	public void validarPrazoFrete() {
-		String sNumeroDoTeste = "#0005";
+	public void validarInformacoesFrete_prazo() {
+		sId = "#0005";
 		String sCpePesquisado = "13091561";
-		amazon.pesquisar("frigideira");
-		amazon.clicarPrimeiroProdutoBusca();
-		amazon.clicarEndereco();
-		Assert.assertTrue(amazon.validarCalculoFrete(sCpePesquisado));
+		amazon.validarRetornoFrete_prazo(sCpePesquisado);
 	} 
 	
-//	**************** teste 06 - REVISADO ********************
+//	****************** CENARIO 06 ********************
 	@Test
 	public void validarMensagemCepInvalido() {
-		String sNumeroDoTeste = "#0006";
+		sId = "#0006";
 		String sCEP = "000000000";
-		amazon.pesquisar("Copo");
-		amazon.clicarPrimeiroProdutoBusca();
-		amazon.clicarEndereco();
-		Assert.assertEquals("Insira um CEP válido", amazon.validarCepErrado(sCEP));
+		amazon.validaMsgCepErrado(sCEP);
+		
 	}
 
-//	******************* teste 07 - REVISADO *********************
+//	****************** CENARIO 07 ********************
 	@Test
 	public void conferirIntemNoCarrinho() {
-		String sNumeroDoTeste = "#0007";
-		String sProdutoPesquisado ="limpa vidro";
-		amazon.pesquisar(sProdutoPesquisado);
-		amazon.clicarPrimeiroProdutoBusca();
-		amazon.adicionarProdutoCarrinho();
-		amazon.irParaCarrinho();
-		amazon.retornaItemCarrinho();
-		Assert.assertTrue(amazon.retornaItemCarrinho().contains(sProdutoPesquisado));
+		sId = "#0007";
+		amazon.validarItemCarrinho();		
 	}
 
-	// ************************ TESTE 08 - VALIDADO *******************
+//	****************** CENARIO 08 ********************
 	@Test
 	public void validarPrecoDobrado() {
-		String sNumeroDoTeste = "#0008";
-		amazon.pesquisar("Lapis");
-		amazon.clicarPrimeiroProdutoBusca();
-		amazon.adicionarProdutoCarrinho();
-		amazon.irParaCarrinho();
-		amazon.aumentarQtdeCarrinho(3);
-		Assert.assertTrue(amazon.validarValorTotalItem());	
+		sId = "#0008";
+		amazon.validarValorTotalItem();	
 	}
 
-//	******************* teste 09 - REVISADO *************************
-
+//	****************** CENARIO 09 ********************
 	@Test
 	public void confirmarDoisItensNaCesta() {
-		
-		String sNumeroDoTeste = "#0009";
-		String sItem1 = "fogão";
-		String sItem2 = "Geladeira";
-		
-		String[] sItensPesuisados = { sItem1, sItem2 };
-
-		for (int i = 0; i < sItensPesuisados.length; i++) {
-			amazon.pesquisar(sItensPesuisados[i]);
-			amazon.clicarPrimeiroProdutoBusca();
-			amazon.adicionarProdutoCarrinho();
-		}
-		amazon.irParaCarrinho();
-		Assert.assertTrue(amazon.obterQdeItensCarrinho()== sItensPesuisados.length);
-		
+		sId = "#0009";
+		amazon.validarDoisItensNaCesta();
 	}
 
-//	******************* teste 10 - REVISADO *********************
-
+//	****************** CENARIO 10 ********************
 	@Test
 	public void excluirItemDoCarrinho()  {
-		String sNumeroDoTeste = "#0010";
-		String sItemPesquisado = "garrafa";
-		amazon.pesquisar(sItemPesquisado);
-		amazon.clicarPrimeiroProdutoBusca();
-		amazon.adicionarProdutoCarrinho();
-		amazon.irParaCarrinho();
-		amazon.excluirItemCarrinho();		
-		Assert.assertEquals("Seu carrinho de compras da Amazon está vazio.", amazon.retornaMsgCarrinho());
+		sId = "#0010";
+		amazon.validarMensagemCarinhoVazio();
 	}
 
-//	******************* teste 11 - REVISADO *********************
-	
+//	****************** CENARIO 11 ********************
 	@Test
 	public void validarQtdeProdCarrinho() {
-		String sNumeroDoTeste = "#0011";
-		String[] sProduto = {"televisao","bicicleta"};
-		for(int i=0;i<sProduto.length;i++) {
-			amazon.pesquisar(sProduto[i]);
-			amazon.clicarPrimeiroProdutoBusca();
-			amazon.adicionarProdutoCarrinho();			
-		}
-		amazon.irParaCarrinho();
-		amazon.excluirItemCarrinho();
-		Assert.assertTrue(amazon.obterQdeItensCarrinho()==(sProduto.length -1));
+		sId = "#0011";
+		amazon.validarQuantidadeItensCarinho();
 	}
 	
-//	******************* teste 12 - REVer*********************
+//	****************** CENARIO 12 ********************
 	@Test
 	public void validarNescessidadeDeLogim() {
-		String sNumeroDoTeste = "#0012";
-		String sProdutoPesquisado = "televisao";
-		amazon.pesquisar(sProdutoPesquisado);
-		amazon.clicarPrimeiroProdutoBusca();
-		amazon.adicionarProdutoCarrinho();
-		amazon.irParaCarrinho();
-		amazon.fecharPedido();
-		Assert.assertEquals("Fazer login", amazon.msgNecessarioLogin());
+		sId = "#0012";
+		amazon.msgNecessarioLogin();
 	}
 
-//	******************* teste 13 - REVISADO *************************
+//	****************** CENARIO 13 ********************
 	@Test
 	public void validarBuscaCategoriaDepartamento() {
-		String sIdTeste = "#0013";
-		amazon.abrirMenuLateral();
-		amazon.clicarCategoria("Informática");
-		amazon.clicarSubCateoria("Notebooks");
-		Assert.assertTrue(amazon.validaReornoResultado());		
+		sId = "#0013";
+		amazon.validaReornoResultadoBuscaCatehoria();	
 	}
 
-//	******************* teste 14 *********************
+//	****************** CENARIO 14 ********************
 	@Test
 	public void validarLenovoDescritivoPrimeiroProduto() {
-		String sIdTeste = "#0014";
-		amazon.abrirMenuLateral();
-		amazon.clicarCategoria("Informática");
-		amazon.clicarSubCateoria("Notebooks");
-		amazon.selecionarMarca("Lenovo");	
-		Assert.assertTrue(amazon.validarPrimeiroProduto().contains("Lenovo"));
+		sId = "#0014";
+		amazon.validarPrimeiroProdutoMarcaLenovo();
 	}
-//	******************* teste 15 *********************
+//	****************** CENARIO 15 ********************
 	@Test
 	public void validarOrdemMaioMenor() {
-		String sIdTeste = "#0015";
-		amazon.abrirMenuLateral();
-		amazon.clicarCategoria("Informática");
-		amazon.clicarSubCateoria("Notebooks");
-		amazon.selecionarMarca("Lenovo");	
-		amazon.ordenarPreco("maior", "menor");
-		Assert.assertTrue(amazon.confirmarOndenacao());		
+		sId = "#0015";
+		amazon.validarOndenacaoPrecoMaiorMenor();	
 	}	
 }

@@ -1,106 +1,110 @@
 package utilitarios;
 
-import org.hamcrest.core.StringContains;
+import org.junit.Assert;
+import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class AmazonUtils {
 	WebDriver driver;
 	DSL dsl;
 	WebDriverWait wait;
+	ExcelUtils excel;
+	
+	
 
 	public AmazonUtils(WebDriver driver, DSL dsl) {
-		super();
+		
 		this.driver = driver;
 		this.dsl = dsl;
 		this.wait = new WebDriverWait(driver, 30);
+		this.excel =excel = new ExcelUtils();
 	}
 
-	public void login(String email, String senha) {
+	public void login() {
+		String[] credencial = excel.credenciais();
 		dsl.clicarElemento(By.id("nav-link-accountList-nav-line-1"));
-		dsl.escrever(By.id("ap_email"), email);
+		dsl.escrever(By.id("ap_email"), credencial[0]);
 		dsl.clicarElemento(By.id("continue"));
-		dsl.escrever(By.id("ap_password"), senha);
+		dsl.escrever(By.id("ap_password"), credencial[1]);
 		dsl.clicarElemento(By.id("signInSubmit"));
+		Assert.assertEquals("Olá, Saulo", dsl.retornaConteudo(By.id("nav-link-accountList-nav-line-1")) );
 	}
 
-	public void logut() {
+	public void logout() {
+		login();
+		dsl.esperarPresencaElemento(By.xpath("//a[@id='nav-item-signout']//span[text()='Sair da conta']"));
 		WebElement sair = driver.findElement(By.xpath("//a[@id='nav-item-signout']//span[text()='Sair da conta']"));
 		JavascriptExecutor js = (JavascriptExecutor) driver;
 		js.executeScript("arguments[0].click();", sair);
+		Assert.assertEquals("Fazer login", dsl.retornaConteudo(By.xpath("//label[@for='ap_email']/../../h1")));
 	}
 
 	public void pesquisar(String sNomeProduto) {
-		WebElement wBtnPesquisar;
-		WebElement wCaixaPesquisa = dsl.elemento(By.xpath("//form[@name='site-search']//input[@type='text']"));
-		String sIdentificaPagina = wCaixaPesquisa.getAttribute("id");
-		if (sIdentificaPagina.equalsIgnoreCase("twotabsearchtextbox")) {
-			wCaixaPesquisa.sendKeys(sNomeProduto);
-			wBtnPesquisar = dsl.elemento(By.id("nav-search-submit-button"));
-//			dsl.clicarElemento(By.id("nav-search-submit-button"));
-
-		} else {
-			wCaixaPesquisa.sendKeys(sNomeProduto);
-//			dsl.clicarElemento(By.xpath("//input[@value='Ir'][@type='submit']"));
-			wBtnPesquisar = dsl.elemento(By.xpath("//input[@value='Ir'][@type='submit']"));
-		}
-		wBtnPesquisar.click();
-
+		dsl.escrever(By.xpath("//form[@name='site-search']//input[@type='text']"), sNomeProduto);
+		dsl.clicar(By.id("nav-search-submit-button"));
 	}
 
-	public String msgProdutoInexiste() {
+	private int retornaProdutoExistente(String cenario) {
+		pesquisar(excel.buscarBanco(cenario));
 		dsl.esperarPresencaElemento(By.xpath("//div[@data-cel-widget='UPPER-RESULT_INFO_BAR-0']/.."));
 		WebElement retornoNaoEncontrado = dsl
 				.elemento(By.xpath("//div[@data-cel-widget='UPPER-RESULT_INFO_BAR-0']/.."));
-		String aux = retornoNaoEncontrado.getAttribute("data-component-id");
-		if (aux.equalsIgnoreCase("1")) {
-			return "Nenhum resultado para";
-		} else {
-			return null;
-		}
-
+		String sAux = retornoNaoEncontrado.getAttribute("data-component-id");
+		int iAux = dsl.converterStringToInteiro(sAux);
+		return iAux;		
+	}
+	
+	public void validarProdutoExistente(String cenario) {
+		Assert.assertTrue(retornaProdutoExistente(cenario)!=1);
+	}
+	
+	public void validarMsgProdutoNaoEncontrado(String cenario) {	
+		retornaProdutoExistente(cenario);
+		Assert.assertEquals("Nenhum resultado para", dsl.retornaConteudo(By.xpath("//span[text()='Nenhum resultado para ']")));			
 	}
 
 	public void clicarPrimeiroProdutoBusca() {
-		dsl.esperarPresencaElemento(By.xpath("//div[@data-component-id='2']"));
-		dsl.clicar(By.xpath("//div[@data-component-id='2']"));
+		dsl.esperarPresencaElemento(By.xpath("//div[@data-index='2']"));
+		dsl.clicar(By.xpath("//div[@data-index='2']"));
 	}
 
 	public void clicarEndereco() {
 		dsl.clicar(By.xpath("//div[@id='contextualIngressPtLabel_deliveryShortLine']"));
 	}
 
-	public void inserirCep(String cep) {
+	private void inserirCep(String cep) {
 
 		dsl.esperarPresencaElemento(By.id("GLUXZipUpdateInput_0"));
 		dsl.escrever(By.id("GLUXZipUpdateInput_0"), cep);
 		dsl.clicarElemento(By.id("GLUXZipUpdate"));
 	}
 
-	public boolean validarCalculoFrete(String cep) {//
+	public void validarRetornoFrete_prazo(String cep) {
+		pesquisar(excel.buscarBanco("#0005"));
+		clicarPrimeiroProdutoBusca();
+		clicarEndereco();
 		inserirCep(cep);
 		dsl.esperarPresencaElemento(By
 				.xpath("//div[@id='contextualIngressPtLabel_deliveryShortLine']/span[contains(text(),'Enviar para')]"));
 		WebElement wCepOk = driver.findElement(By
 				.xpath("//div[@id='contextualIngressPtLabel_deliveryShortLine']/span[contains(text(),'" + cep + "')]"));
-		System.out.println("Variavel = " + wCepOk.getText());
-		if (wCepOk.getText().contains(cep)) {
-			return true;
-		} else {
-			return false;
-		}
+		Assert.assertTrue(wCepOk.getText().contains(cep));
 	}
 
-	public String validarCepErrado(String cep) {
+	public void validaMsgCepErrado(String cep) {
+		pesquisar(excel.buscarBanco("#0006"));
+		clicarPrimeiroProdutoBusca();
+		clicarEndereco();		
 		inserirCep(cep);
-		WebElement wMsg = driver.findElement(By.xpath("//div[text()='Insira um CEP válido']"));
-		wait.until(ExpectedConditions.visibilityOf(wMsg));
-		return wMsg.getText();
+		WebElement wMsg =dsl.elemento(By.xpath("//div[text()='Insira um CEP válido']"));
+		dsl.esperarElementoVisivel(By.xpath("//div[text()='Insira um CEP válido']"));
+		Assert.assertEquals("Insira um CEP válido",dsl.retornaConteudo(By.xpath("//div[text()='Insira um CEP válido']")));
+		
 	}
 
 	public void adicionarProdutoCarrinho() {
@@ -126,17 +130,28 @@ public class AmazonUtils {
 		return dsl.converterStringToInteiro(conteudo);
 	}
 
-	public String retornaItemCarrinho() {
+	public void validarItemCarrinho() {		
+		pesquisar(excel.buscarBanco("#0007"));
+		clicarPrimeiroProdutoBusca();
+		dsl.esperarPresencaElemento(By.id("productTitle"));
+		String sTitulo = dsl.retornaConteudo(By.id("productTitle"));
+		adicionarProdutoCarrinho();
+		irParaCarrinho();
 		dsl.esperarPresencaElemento(By.xpath("//div[@data-item-index='1']"));
-		return dsl.retornaConteudo(By.xpath("//div[@data-item-index='1']")).toLowerCase();
+		Assert.assertTrue(dsl.retornaConteudo(By.xpath("//div[@data-item-index='1']")).contains(sTitulo));
 	}
 
-	public int aumentarQtdeCarrinho(int iQtdeProdutos) {
+	private int aumentarQtdeCarrinho(int iQtdeProdutos) {
 		dsl.selecionarOpcao(By.id("quantity"), iQtdeProdutos);
 		return iQtdeProdutos;
 	}
 
-	public boolean validarValorTotalItem() {
+	public void validarValorTotalItem() {
+		pesquisar(excel.buscarBanco("#0008"));
+		clicarPrimeiroProdutoBusca();
+		adicionarProdutoCarrinho();
+		irParaCarrinho();
+		aumentarQtdeCarrinho(2);		
 		String valorSelecionado = dsl.valorSetadoCombo(By.id("quantity"));
 		int iQtdeProdutos = Integer.parseInt(valorSelecionado);
 		WebElement wValorUnitario = driver.findElement(By
@@ -145,29 +160,24 @@ public class AmazonUtils {
 		dsl.esperarPresencaElemento(By.xpath("//span[contains(text(),'(" + iQtdeProdutos + " itens):') ] "));
 		WebElement wValorTotal = driver.findElement(By.xpath("//span[@id='sc-subtotal-amount-activecart']/span"));
 		Double dValorTotal = dsl.converterStringToDouble(wValorTotal.getText(), " ");
-		if ((dValorUnitario * iQtdeProdutos) == dValorTotal) {
-			return true;
-		} else {
-			return false;
-		}
+		Assert.assertTrue((dValorUnitario*2)== dValorTotal);
 	}
 
 	public void excluirItemCarrinho() {
-//		WebElement wDeletarDoCarrinho = driver
-//				.findElement(By.xpath("//div[@data-item-index='1']//span[@data-action='delete']//input"));
-//		wDeletarDoCarrinho.click();
-		dsl.clicar(By.xpath("//div[@data-item-index='1']//span[@data-action='delete']//input"));
-//		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='sc-active-cart']//h1[contains(text(),'está vazio.')]")));
 
-//		WebElement wMsgItemRemovido = driver
-//				.findElement(By.xpath("//div[@id='sc-active-cart']//h1[contains(text(),'está vazio.')]"));
-//		
+		dsl.clicar(By.xpath("//div[@data-item-index='1']//span[@data-action='delete']//input"));
+	
 	}
 
-	public String retornaMsgCarrinho() {
+	public void validarMensagemCarinhoVazio() {
+		pesquisar(excel.buscarBanco("#0010"));
+		clicarPrimeiroProdutoBusca();
+		adicionarProdutoCarrinho();
+		irParaCarrinho();
+		excluirItemCarrinho();		
 		dsl.esperarPresencaElemento(By.xpath("//div[@id='sc-active-cart']//h1[contains(text(),'está vazio.')]"));
 		String msg = dsl.retornaConteudo(By.xpath("//div[@id='sc-active-cart']//h1[contains(text(),'está vazio.')]"));
-		return msg;
+		Assert.assertEquals("Seu carrinho de compras da Amazon está vazio.", msg);
 	}
 
 	public void fecharPedido() {
@@ -175,9 +185,13 @@ public class AmazonUtils {
 //		WebElement wTelaDeLogin = driver.findElement(By.xpath("//h1"));
 	}
 
-	public String msgNecessarioLogin() {
-		String msg = dsl.retornaConteudo(By.xpath("//h1"));
-		return msg;
+	public void msgNecessarioLogin() {		
+		pesquisar(excel.buscarBanco("#0012"));
+		clicarPrimeiroProdutoBusca();
+		adicionarProdutoCarrinho();
+		irParaCarrinho();
+		fecharPedido();
+		Assert.assertEquals("Fazer login", dsl.retornaConteudo(By.xpath("//h1")));	
 	}
 
 	public void abrirMenuLateral() {
@@ -202,7 +216,13 @@ public class AmazonUtils {
 		}
 	}
 
-	public boolean confirmarOndenacao() {
+	public void validarOndenacaoPrecoMaiorMenor() {
+		abrirMenuLateral();
+		clicarCategoria("Informática");
+		clicarSubCateoria("Notebooks");
+		selecionarMarca("Lenovo");	
+		ordenarPreco("maior", "menor");
+		
 		Double[] valor = { 0.0, 0.0 };
 		for (int i = 1; i <= 2; i++) {
 			dsl.esperarPresencaElemento(By.xpath("//div[@data-index='" + i + "']"));
@@ -213,11 +233,7 @@ public class AmazonUtils {
 				valor[i - 1] = Double.parseDouble(valorTexto);
 			}
 		}
-		if (valor[0] > valor[1]) {
-			return true;
-		} else {
-			return false;
-		}
+		Assert.assertTrue(valor[0] > valor[1]);
 	}
 
 	public void clicarSubCateoria(String subCategoria) {
@@ -237,17 +253,16 @@ public class AmazonUtils {
 		dsl.clicar(By.xpath("//a[text()='" + subCategoria + "']"));
 	}
 
-	public boolean validaReornoResultado() {
+	public void validaReornoResultadoBuscaCatehoria() {
+		
+		abrirMenuLateral();
+		clicarCategoria("Informática");
+		clicarSubCateoria(excel.buscarBanco("#0013"));		
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[contains(text(),'resultados para')]")));
-//		WebElement wResultado = driver.findElement(By.xpath("//span[contains(text(),'resultados para')]"));
 		String sResultado = dsl.retornaConteudo(By.xpath("//span[contains(text(),'resultados para')]/.."));
-//		System.out.println("resultao = "+
-//				dsl.retornaConteudo(By.xpath("//span[contains(text(),'resultados para')]/..")));
-		if (sResultado.contains("1-") && sResultado.contains("mais de ") && sResultado.contains("resultados para")) {
-			return true;
-		} else {
-			return false;
-		}
+		System.out.println("resultao = "+sResultado);
+		Assert.assertTrue(sResultado.contains("resultados para "+excel.buscarBanco("#0013")));
+		
 	}
 
 	public void selecionarMarca(String marca) {
@@ -255,10 +270,40 @@ public class AmazonUtils {
 		dsl.clicarComJS(By.xpath("//span[text()='Marca']/../../ul//*[text()='Lenovo']"));
 	}
 
-	public String validarPrimeiroProduto() {
+	public void validarPrimeiroProdutoMarcaLenovo() {
+		abrirMenuLateral();
+		clicarCategoria("Informática");
+		clicarSubCateoria("Notebooks");
+		selecionarMarca("Lenovo");		
 		dsl.esperarPresencaElemento(By.xpath("//div[@data-index='1']"));
 		String sDescritivo = dsl.retornaConteudo(By.xpath("//div[@data-index='1']"));
-		return sDescritivo;
+		Assert.assertTrue(sDescritivo.contains("Lenovo"));
+	}
+	@Test
+	public void validarDoisItensNaCesta() {
+		String sItem1 = excel.buscarBanco("#0009-1");
+		String sItem2 = excel.buscarBanco("#0009-2");
+		adcionarVariosItensCarrinho(sItem1,sItem2);
+		irParaCarrinho();
+		Assert.assertTrue(obterQdeItensCarrinho()== 2);
+	}
+	
+	private void adcionarVariosItensCarrinho(String... itens) {
+		for (int i = 0; i < itens.length; i++) {
+			pesquisar(itens[i]);
+			clicarPrimeiroProdutoBusca();
+			adicionarProdutoCarrinho();
+		}	
+	}
+	
+	public void validarQuantidadeItensCarinho() {
+		String sNumeroDoTeste = "#0011";
+		String produto1 = excel.buscarBanco("#0011-1");
+		String produto2 = excel.buscarBanco("#0011-2");
+		adcionarVariosItensCarrinho(produto1, produto2);
+		irParaCarrinho();
+		excluirItemCarrinho();
+		Assert.assertTrue(obterQdeItensCarrinho()==1);
 	}
 
-}
+}//Fim da Classe
