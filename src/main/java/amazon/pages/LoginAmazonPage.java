@@ -3,6 +3,7 @@ package amazon.pages;
 
 import static utilitarios.DriverFactory.getDriver;
 
+import org.junit.Assert;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
@@ -50,4 +51,7 @@ public class LoginAmazonPage {
 		dsl.clicar(btnFazerLogin);
 	}
 	
+	public void validaLogout() {
+		Assert.assertTrue(inputEmail.isDisplayed());
+	}
 }

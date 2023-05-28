@@ -16,22 +16,15 @@ public class AmazonUtils {
 	
 	
 
-//	public AmazonUtils(WebDriver driver, DSL dsl) {
-//		
-//		this.driver = driver;
-//		this.dsl = dsl;
-//		this.wait = new WebDriverWait(driver, 30);
-//		this.excel =excel = new ExcelUtils();
-//	}
-	public AmazonUtils() {		
-	}
 	
+//	********* METODOS PRIVADOS ***************
 	private void entrarSiteSamazon() {
 		DriverFactory.getDriver().get("https://www.amazon.com.br/");
 	}
 
-	public void login() {
+	private void logar() {
 		entrarSiteSamazon();
+//		String[] credencial = excel.credenciais();
 		homePage = pages.getHomePage();
 		loginPage =pages.getLoginPage();
 		homePage.clicarFazerLogin(); 
@@ -39,25 +32,20 @@ public class AmazonUtils {
 		loginPage.clicarContinuar();
 		loginPage.entrarSenha("#!S@ulo1978");
 		loginPage.clicarFazerLogin();
+	}
+	
+//	********* FIM METODOS PRIVADOS ***************
+	public void validarLogin() {
+		logar();
 		homePage.validaLogin();
-//		String[] credencial = excel.credenciais();
-//		dsl.clicarElemento(By.id("nav-link-accountList-nav-line-1"));
-//		dsl.escrever(By.id("ap_email"), credencial[0]);
-//		dsl.clicarElemento(By.id("continue"));
-//		dsl.escrever(By.id("ap_password"), credencial[1]);
-//		dsl.clicarElemento(By.id("signInSubmit"));
-//		Assert.assertEquals("Olá, Saulo", dsl.retornaConteudo(By.id("nav-link-accountList-nav-line-1")) );
-		
 	}
 
-//	public void logout() {
-//		login();
-//		dsl.esperarPresencaElemento(By.xpath("//a[@id='nav-item-signout']//span[text()='Sair da conta']"));
-//		WebElement sair = driver.findElement(By.xpath("//a[@id='nav-item-signout']//span[text()='Sair da conta']"));
-//		JavascriptExecutor js = (JavascriptExecutor) driver;
-//		js.executeScript("arguments[0].click();", sair);
-//		Assert.assertEquals("Fazer login", dsl.retornaConteudo(By.xpath("//label[@for='ap_email']/../../h1")));
-//	}
+	public void logout() {
+		loginPage = pages.getLoginPage();
+		logar();
+		homePage.clicarSairDaConta();
+		loginPage.validaLogout();	
+	}
 //
 //
 //	public void pesquisar(String sNomeProduto) {

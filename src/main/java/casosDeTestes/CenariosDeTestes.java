@@ -86,18 +86,18 @@ public class CenariosDeTestes {
 //	}	 
 
 //	****************** CENARIO 01 ********************
-	@Test
-	public void validarLogimAmazon() {
-//		sId = "#0001";
-		amazon.login();
-	}
+//	@Test
+//	public void validarLogimAmazon() {
+////		sId = "#0001";
+//		amazon.validarLogin();
+//	}
 
 //	****************** CENARIO 02 ********************
-//	@Test
-//	public void validarLogaltAmazon() {
+	@Test
+	public void validarLogaltAmazon() {
 //		sId = "#0002";
-//		amazon.logout();
-//	}
+		amazon.logout();
+	}
 //
 ////	****************** CENARIO 03 ********************
 //	@Test

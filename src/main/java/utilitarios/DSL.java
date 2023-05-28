@@ -126,4 +126,9 @@ public class DSL {
 		js.executeScript("arguments[0].click();", elemento);
 	}
 
+	public void clicarComJS(WebElement elemento) {
+		JavascriptExecutor js = (JavascriptExecutor) getDriver();
+		js.executeScript("arguments[0].click();", elemento);
+	}
+
 }// fim da classe

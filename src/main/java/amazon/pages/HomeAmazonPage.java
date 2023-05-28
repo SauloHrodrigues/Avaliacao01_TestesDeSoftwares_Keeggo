@@ -10,6 +10,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
 
+import amazon.gerenciadores.GerenciadorPages;
 import utilitarios.DSL;
 
 public class HomeAmazonPage {
@@ -21,6 +22,9 @@ public class HomeAmazonPage {
 	@FindBy(how = How.ID, using = "glow-ingress-line1")
 	private WebElement lblEnviarPara;
 
+	@FindBy(how = How.ID, using = "nav-item-signout")
+	private WebElement linkSairDaConta;
+
 	//construtor
 	public HomeAmazonPage() {
 		dsl = new DSL();
@@ -31,11 +35,29 @@ public class HomeAmazonPage {
 	public void clicarFazerLogin() {
 		dsl.clicar(linkFazerLogin);
 	}
+
+	public void clicarSairDaConta() {
+		dsl.clicarComJS(linkSairDaConta);
+	}
 	
-	public void validaLogin() {
+	private boolean verificaLogin() {
 		String enviarPara = dsl.retornaConteudo(lblEnviarPara);
 		String[] aux = (dsl.retornaConteudo(linkFazerLogin)).split(" ");
 		String login = aux[1] ;
-		Assert.assertTrue(enviarPara.contains(login));
+		
+		if(enviarPara.contains(login)) {
+			return true;
+		}else {
+			return false;
+		}	
+	}
+	
+	public void validaLogin() {
+		Assert.assertTrue(verificaLogin());
+	}
+	
+	public void validaLogout() {
+		GerenciadorPages pages = new GerenciadorPages();
+		LoginAmazonPage login = pages.getLoginPage();
 	}
 }
