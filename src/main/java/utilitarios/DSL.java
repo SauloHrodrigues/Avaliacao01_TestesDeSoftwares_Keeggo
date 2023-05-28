@@ -17,6 +17,9 @@ public class DSL {
 		this.driver = driver;
 		this.wait = new WebDriverWait(driver, 60);
 	}
+	public DSL() {
+		
+	}
 
 	public String retornaConteudo(By by) {
 		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(by));
@@ -29,6 +32,11 @@ public class DSL {
 	public void clicar(By by) {
 		clicarElemento(by);
 	}
+	//novo
+	public void clicar(WebElement elemento) {
+		elemento.click();
+	}
+	
 	public void clicarElemento(By by) {
 		driver.findElement(by).click();
 	}
@@ -36,10 +44,14 @@ public class DSL {
 		return driver.findElement(by);
 	}
 	
-	
+//	******************** Escrever **********************************
 	public void escrever(By by, String conteudo) {
 		WebElement wCaixa = driver.findElement(by);
 		wCaixa.sendKeys(conteudo);
+	}
+	
+	public void escrever(WebElement elemento, String conteudo) {
+		elemento.sendKeys(conteudo);
 	}
 	
 	public boolean validarElementoVisivel(By by) {
