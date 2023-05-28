@@ -1,13 +1,17 @@
 package amazon.pages;
 
 
+import static utilitarios.DriverFactory.getDriver;
+
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
+import org.openqa.selenium.support.PageFactory;
 
 import utilitarios.DSL;
+import utilitarios.DriverFactory;
 
-public class PageLoginAmazon {
+public class LoginAmazonPage {
 	
 	private DSL dsl;
 	
@@ -20,13 +24,13 @@ public class PageLoginAmazon {
 	@FindBy(how = How.ID, using = "ap_password")
 	private WebElement imputSenha;
 
-	@FindBy(how = How.ID, using = "ap_password")
+	@FindBy(how = How.ID, using = "signInSubmit")
 	private WebElement btnFazerLogin;
 	
 //	CONSTRUTOR
-	public PageLoginAmazon() {
+	public LoginAmazonPage() {
 		dsl = new DSL();
-//		PageFactory.initElements(getDriver(), this);
+		PageFactory.initElements(getDriver(), this);
 	}
 
 		

@@ -1,22 +1,18 @@
 package utilitarios;
 
-import static utilitarios.DriverFactory.getDriver;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import amazon.gerenciadores.GerenciadorPages;
+import amazon.pages.HomeAmazonPage;
+import amazon.pages.LoginAmazonPage;
 
 public class AmazonUtils {
 
-	DSL dsl;
-	WebDriverWait wait;
-	ExcelUtils excel;
+//	DSL dsl;
+//	WebDriverWait wait;
+//	ExcelUtils excel;
+
+	private GerenciadorPages pages = new GerenciadorPages();
+	private HomeAmazonPage homePage;
+	private LoginAmazonPage loginPage;
 	
 	
 
@@ -27,14 +23,23 @@ public class AmazonUtils {
 //		this.wait = new WebDriverWait(driver, 30);
 //		this.excel =excel = new ExcelUtils();
 //	}
-	public AmazonUtils() {
-		
-		getDriver();
-		this.dsl = new DSL();
-		
+	public AmazonUtils() {		
+	}
+	
+	private void entrarSiteSamazon() {
+		DriverFactory.getDriver().get("https://www.amazon.com.br/");
 	}
 
 	public void login() {
+		entrarSiteSamazon();
+		homePage = pages.getHomePage();
+		loginPage =pages.getLoginPage();
+		homePage.clicarFazerLogin(); 
+		loginPage.entrarEmail("saulohrodrigues@gmail.com");
+		loginPage.clicarContinuar();
+		loginPage.entrarSenha("#!S@ulo1978");
+		loginPage.clicarFazerLogin();
+		homePage.validaLogin();
 //		String[] credencial = excel.credenciais();
 //		dsl.clicarElemento(By.id("nav-link-accountList-nav-line-1"));
 //		dsl.escrever(By.id("ap_email"), credencial[0]);
@@ -42,8 +47,7 @@ public class AmazonUtils {
 //		dsl.escrever(By.id("ap_password"), credencial[1]);
 //		dsl.clicarElemento(By.id("signInSubmit"));
 //		Assert.assertEquals("Olá, Saulo", dsl.retornaConteudo(By.id("nav-link-accountList-nav-line-1")) );
-		DriverFactory.getDriver().get("https://www.google.com.br/");
-		System.out.println("olá mundo!"); 
+		
 	}
 
 //	public void logout() {

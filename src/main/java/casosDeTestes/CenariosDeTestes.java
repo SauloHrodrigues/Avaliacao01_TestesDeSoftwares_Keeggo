@@ -90,9 +90,6 @@ public class CenariosDeTestes {
 	public void validarLogimAmazon() {
 //		sId = "#0001";
 		amazon.login();
-		DriverFactory.getDriver().get("https://www.google.com.br/");;
-		
-		System.out.println("olá mundo!");
 	}
 
 //	****************** CENARIO 02 ********************
