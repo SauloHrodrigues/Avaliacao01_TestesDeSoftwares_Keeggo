@@ -4,13 +4,20 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 
-public class HomePageAmazon {
+import utilitarios.DSL;
 
+public class HomePageAmazon {
+	private DSL dsl;
+	
 	@FindBy(how = How.ID, using = "nav-link-accountList-nav-line-1")
 	private WebElement linkFazerLogin;
+
+	public HomePageAmazon() {
+		dsl = new DSL();
+	}
 	
-	
-	
-	
-//	dsl.clicarElemento(By.id("nav-link-accountList-nav-line-1"));
+	public void fazerLogin() {
+		dsl.clicar(linkFazerLogin);
+	}
+
 }
