@@ -85,26 +85,26 @@ public class CenariosDeTestes {
 //		 
 //	}	 
 
-//	****************** CENARIO 01 ********************
-//	@Test
-//	public void validarLogimAmazon() {
-////		sId = "#0001";
-//		amazon.validarLogin();
-//	}
+//	****************** CENARIO 01 - refatorado ********************
+	@Test
+	public void validarLogimAmazon() {
+//		sId = "#0001";
+		amazon.validarLogin();
+	}
 
-//	****************** CENARIO 02 ********************
+//	****************** CENARIO 02 - Refatorado ********************
 	@Test
 	public void validarLogaltAmazon() {
 //		sId = "#0002";
 		amazon.logout();
 	}
-//
-////	****************** CENARIO 03 ********************
-//	@Test
-//	public void validarProdutoExistente() {
+
+//	****************** CENARIO 03 ********************
+	@Test
+	public void validarProdutoExistente() {
 //		sId = "#0003";
-//		amazon.validarProdutoExistente("#0003");
-//	}
+		amazon.validaProdutoInexixtente();
+	}
 //	
 ////	****************** CENARIO 04 ********************
 //	@Test

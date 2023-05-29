@@ -11,13 +11,10 @@ public class AmazonUtils {
 //	ExcelUtils excel;
 
 	private GerenciadorPages pages = new GerenciadorPages();
-	private HomeAmazonPage homePage;
+	private HomeAmazonPage homePage = pages.getHomePage();
 	private LoginAmazonPage loginPage;
 	
 	
-
-	
-//	********* METODOS PRIVADOS ***************
 	private void entrarSiteSamazon() {
 		DriverFactory.getDriver().get("https://www.amazon.com.br/");
 	}
@@ -32,9 +29,8 @@ public class AmazonUtils {
 		loginPage.clicarContinuar();
 		loginPage.entrarSenha("#!S@ulo1978");
 		loginPage.clicarFazerLogin();
-	}
+	}   
 	
-//	********* FIM METODOS PRIVADOS ***************
 	public void validarLogin() {
 		logar();
 		homePage.validaLogin();
@@ -46,12 +42,19 @@ public class AmazonUtils {
 		homePage.clicarSairDaConta();
 		loginPage.validaLogout();	
 	}
-//
-//
-//	public void pesquisar(String sNomeProduto) {
-//		dsl.escrever(By.xpath("//form[@name='site-search']//input[@type='text']"), sNomeProduto);
-//		dsl.clicar(By.id("nav-search-submit-button"));
-//	}
+
+
+	public void pesquisar(String sNomeProduto) {
+		entrarSiteSamazon();
+		homePage.pesquisar(sNomeProduto);
+		homePage.clicarLupaPesquisar();
+	}
+	
+	public void validaProdutoInexixtente() {
+		pesquisar("S--#@L148");
+		homePage.validaProdutoInexistente();
+	}
+	
 //
 //	private int retornaProdutoExistente(String cenario) {
 //		pesquisar(excel.buscarBanco(cenario));
@@ -75,6 +78,8 @@ public class AmazonUtils {
 //	public void clicarPrimeiroProdutoBusca() {
 //		dsl.esperarPresencaElemento(By.xpath("//div[@data-index='2']"));
 //		dsl.clicar(By.xpath("//div[@data-index='2']"));
+	/*Copmentario: vitar repetição de elementos, optar por concentra-los em 
+	váriaveis (Ex: AmazonUtils.java:84)*/
 //	}
 //
 //	public void clicarEndereco() {
@@ -196,6 +201,7 @@ public class AmazonUtils {
 //		irParaCarrinho();
 //		fecharPedido();
 //		Assert.assertEquals("Fazer login", dsl.retornaConteudo(By.xpath("//h1")));	
+	/* Cuidado ao mapear elementos sem utilizar atributos do mesmo (Ex: AmazonUtils.java:194);*/
 //	}
 //
 //	public void abrirMenuLateral() {
@@ -270,6 +276,8 @@ public class AmazonUtils {
 //	}
 //
 //	public void selecionarMarca(String marca) {
+	/*Reduzir dependência hierarquica de elementos do Xpath, ou seja, reduzir as "/" (Ex: AmazonUtils.java:269);
+	 *  Não adotar valores dinâmicos para compor o Xpath (Ex: AmazonUtils.java:269);*/
 //		dsl.esperarPresencaElemento(By.xpath("//span[text()='Marca']/../../ul//*[text()='Lenovo']"));
 //		dsl.clicarComJS(By.xpath("//span[text()='Marca']/../../ul//*[text()='Lenovo']"));
 //	}

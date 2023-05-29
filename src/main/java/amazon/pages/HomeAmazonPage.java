@@ -25,6 +25,15 @@ public class HomeAmazonPage {
 	@FindBy(how = How.ID, using = "nav-item-signout")
 	private WebElement linkSairDaConta;
 
+	@FindBy(how = How.ID, using = "twotabsearchtextbox")//twotabsearchtextbox
+	private WebElement inputPesquisar;
+
+	@FindBy(how = How.ID, using = "nav-search-submit-button")
+	private WebElement btnPesquisar;
+
+	@FindBy(how = How.XPATH, using = "//span[contains(text(),'Nenhum resultado para')]")
+	private WebElement msgProdutoInexistente;
+
 	//construtor
 	public HomeAmazonPage() {
 		dsl = new DSL();
@@ -40,24 +49,25 @@ public class HomeAmazonPage {
 		dsl.clicarComJS(linkSairDaConta);
 	}
 	
-	private boolean verificaLogin() {
-		String enviarPara = dsl.retornaConteudo(lblEnviarPara);
-		String[] aux = (dsl.retornaConteudo(linkFazerLogin)).split(" ");
-		String login = aux[1] ;
-		
-		if(enviarPara.contains(login)) {
-			return true;
-		}else {
-			return false;
-		}	
+	public void clicarLupaPesquisar() {
+		dsl.clicar(btnPesquisar);
+	}
+	
+	public void pesquisar(String produto) {
+		System.out.println("Entrou no pesquisar");
+		dsl.escrever(inputPesquisar, produto);
+	}
+	
+	public void validaProdutoInexistente() {
+		Assert.assertTrue(msgProdutoInexistente.isDisplayed());
 	}
 	
 	public void validaLogin() {
-		Assert.assertTrue(verificaLogin());
+		String enviarPara = dsl.retornaConteudo(lblEnviarPara);
+		String[] aux = (dsl.retornaConteudo(linkFazerLogin)).split(" ");
+		String login = aux[1] ;
+		Assert.assertTrue(enviarPara.contains(login));	
 	}
 	
-	public void validaLogout() {
-		GerenciadorPages pages = new GerenciadorPages();
-		LoginAmazonPage login = pages.getLoginPage();
-	}
+	
 }
